@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     pass: GMAIL_PASS,
   },
 });
-
+app.use(express.json());
 app.post("/sendmail", (req, res) => {
   try {
     if (
@@ -27,8 +27,17 @@ app.post("/sendmail", (req, res) => {
 
     const mailOptions = {
       to: MAIL_RECIPIENT,
-      subject: "Invoices due",
-      text: "Dudes, we really need your money.",
+      subject: `Inquiry Request From ${req.body.customerName}`,
+      html: `<!DOCTYPE html>
+              <html>
+              <body>
+            <h2>Inquiry Request</h2>
+            <bold>Sender: </bold> ${req.body.customerName} <br/>
+            <bold>From: </bold> ${req.body.customerEmail} <br/>
+            <bold>Phone: </bold> ${req.body.customerPhone} <br/>
+            <bold>Message: </bold> ${req.body.customerMsg} <br/>
+           </body> 
+            </html>`,
     };
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
